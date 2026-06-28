@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wesely Dashboard Lite</title>
+    <style>
+        /* ================= 全域基本設定 ================= */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        :root {
+            --bg-main: #1c1714;         /* 外層極深焦糖黑 */
+            --bg-card: #2c221e;         /* 內層卡片暖棕色 */
+            --accent-cream: #e5dec9;    /* 核心米牛奶色 */
+            --text-main: #ffffff;      /* 主要純白字 */
+            --text-muted: #8b7e74;     /* 次要泥灰字 */
+            --border-color: #3d312b;   /* 微弱深色邊框 */
+
+            /* 狀態標籤特定色彩 */
+            --badge-not-started: #483d3b;
+            --badge-applied: #223c33;
+            --badge-offered: #253949;
+            --badge-rejected: #442727;
+            
+            --card-job-bg: #231b18;
+            --card-rejected-bg: #2a1a1a;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding-bottom: 60px;
+        }
+
+        /* ================= 頂部橫幅與圖片優化 ================= */
+        .top-banner {
+            width: 100%;
+            background-color: var(--accent-cream);
+            color: #1c1714;
+            padding: 20px 24px;
+            border-bottom: 8px solid var(--bg-main);
+        }
+
+        /* 圖片容器：縮小 25% (寬度設為 75%) 並保持置中 */
+        .banner-image-container {
+            width: 75%;
+            max-width: 1050px;
+            margin: 0 auto 20px auto;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 3px solid #1c1714; /* 襯托像素圖的復古深色外框 */
+            display: flex;
+        }
+
+        .banner-gif {
+            width: 100%;
+            height: auto;
+            display: block;
+            image-rendering: pixelated; /* 保持像素線條銳利 */
+        }
+
+        /* 橫幅下半部雙翼佈局容器 */
+        .brand-title-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        .brand-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .brand-title h1 {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        /* 右側按鈕群組容器 */
+        .banner-btn-group {
+            display: flex;
+            gap: 10px; /* 按鈕之間的間距 */
+            align-items: center;
+        }
+
+        /* 右側增設：通用按鈕基礎樣式 */
+        .nav-btn-link {
+            display: inline-flex;
+            align-items: center;
+            background-color: #231b18; 
+            color: var(--accent-cream); 
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 2px solid #1c1714;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-btn-link:hover {
+            background-color: #3d312b;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        /* ================= 主內容二欄式網格佈局 ================= */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 280px 1fr; 
+            gap: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* ================= 左側側邊欄內部架構 ================= */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sidebar-dropdown {
+            background-color: #2c221e;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: monospace;
+            color: #dfd7c2;
+            cursor: pointer;
+        }
+
+        .panel-section h2 {
+            font-size: 16px;
+            color: var(--accent-cream);
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+
+        /* 進度條組件 */
+        .progress-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            height: 18px;
+            background-color: #ffffff;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-cream);
+        }
+
+        .progress-text {
+            font-size: 11px;
+            color: var(--text-main);
+            width: 70px;
+            text-align: right;
+        }
+
+        /* 待辦事項清單 */
+        .todo-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .todo-list li label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .todo-list input[type="checkbox"] {
+            margin-top: 3px;
+            accent-color: var(--accent-cream);
+        }
+
+        .todo-list input[type="checkbox"]:checked + .todo-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        /* 導覽與工具連結按鈕 */
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #231b18;
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+            transition: background 0.2s;
+        }
+
+        .nav-link:hover {
+            background-color: var(--bg-card);
+        }
+
+        .link-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .linkedin-icon { background-color: #0077b5; color: white; }
+        .glassdoor-icon { background-color: #00b22d; color: white; }
+        .ai-icon { color: #dfd7c2; font-size: 14px; }
+
+        /* ================= 右側主內容卡片佈局 ================= */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .content-card {
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            padding: 24px;
+            border: 1px solid #362b25;
+        }
+
+        /* 卡片頂部工具列 */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-left h2 {
+            font-size: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+        }
+
+        .tab-btn {
+            background-color: #231b18;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background-color: #3d312b;
+            color: var(--text-main);
+        }
+
+        .header-tools {
+            display: flex;
+            gap: 14px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* ================= 看板追蹤系統 (Kanban Board) ================= */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 16px;
+            align-items: start;
+        }
+
+        .kanban-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 150px;
+        }
+
+        /* 狀態標籤樣式 */
+        .column-badge {
+            align-self: flex-start;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .column-badge .count {
+            opacity: 0.6;
+        }
+
+        .status-not-started { background-color: var(--badge-not-started); color: #dfd7c2; }
+        .status-applied { background-color: var(--badge-applied); color: #a9f0cc; }
+        .status-offered { background-color: var(--badge-offered); color: #aed9f3; }
+        .status-rejected { background-color: var(--badge-rejected); color: #f3aeae; }
+
+        /* 看板內的職缺卡片 */
+        .job-card {
+            background-color: var(--card-job-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+        }
+
+        .job-card h3 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .job-card p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .job-card .salary {
+            margin-top: 8px;
+            font-family: monospace;
+            color: var(--text-main);
+        }
+
+        .position-rejected {
+            background-color: var(--card-rejected-bg);
+            border-color: #523333;
+        }
+
+        /* ================= 工具箱雙層網格 (Application Toolbox) ================= */
+        .toolbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 14px;
+        }
+
+        .tool-item {
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 上半層：圖標層（米色背景） */
+        .tool-top {
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tool-top.unlocked {
+            background-color: var(--accent-cream);
+            color: #1c1714;
+        }
+
+        .tool-top.locked {
+            background-color: #231b18;
+            color: var(--text-muted);
+        }
+
+        .tool-icon {
+            font-size: 28px;
+        }
+
+        .tool-icon-box {
+            font-size: 10px;
+            font-weight: bold;
+            border: 2px solid #1c1714;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .lock-icon {
+            font-size: 20px;
+            opacity: 0.4;
+        }
+
+        /* 下半層：說明文字層（深色背景） */
+        .tool-bottom {
+            background-color: #231b18;
+            padding: 10px;
+            font-size: 11px;
+            line-height: 1.3;
+            min-height: 54px;
+            display: flex;
+            align-items: flex-start;
+            color: #dfd7c2;
+            flex-grow: 1;
+        }
+
+        /* ================= 響應式斷點優化 (RWD) ================= */
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                grid-template-columns: 1fr; 
+            }
+            .kanban-board {
+                grid-template-columns: repeat(2, 1fr); 
+            }
+            .banner-image-container {
+                width: 100%; /* 平板以下恢復滿版避免太小 */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .brand-title-container {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .kanban-board {
+                grid-template-columns: 1fr; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 頂部巨大橫幅區 -->
+    <header class="top-banner">
+        
+        <!-- 橫條圖檔容器：已縮小 25% (width: 75%) 且維持置中 -->
+        <div class="banner-image-container">
+            <img src="https://raw.githubusercontent.com/xdespair0217/wesley/main/A01.gif" alt="Pixel Art Banner" class="banner-gif">
+        </div>
+        
+        <!-- 標題與右側多按鈕之佈局層 -->
+        <div class="brand-title-container">
+            <div class="brand-title">
+                <span style="font-size: 24px;">💼</span>
+                <h1>Wesely Dashboard Lite</h1>
+            </div>
+            
+            <!-- 右側按鈕群組 -->
+            <div class="banner-btn-group">
+                <!-- 文學典故連結 -->
+                <a href="https://xdespair0217.github.io/-story/" target="_blank" class="nav-btn-link">
+                    📜 文學典故
+                </a>
+                <!-- 新增：美語卡片連結 -->
+                <a href="https://xdespair0217.github.io/english-card/" target="_blank" class="nav-btn-link">
+                    🎴 美語卡片
+                </a>
+                <!-- 行事曆連結 -->
+                <a href="https://script.google.com/macros/s/AKfycbxA0kemvnZ77YHkMBLhZXwLRucQ6lbwcvqB3-YPJlxHdth9MccbKbRrBO5J-OrNMAKp/exec" target="_blank" class="nav-btn-link">
+                    📅 行事曆
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 核心功能包裹層 -->
+    <main class="dashboard-container">
+        
+        <!-- ================= 左側側邊欄 ================= -->
+        <aside class="sidebar">
+            
+            <div class="sidebar-dropdown">
+                <span>▶ 💌 message from me</span>
+            </div>
+
+            <!-- 進度條區塊 -->
+            <div class="panel-section progress-panel">
+                <div class="progress-item">
+                    <div class="progress-bar-container"><div class="progress-bar" style="width: 49%;"></div></div>
+                    <span class="progress-text">Year: 49%</span>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-bar-container"><div class="progress-bar" style="width: 93%;"></div></div>
+                    <span class="progress-text">Month: 93%</span>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-bar-container"><div class="progress-bar" style="width: 95%;"></div></div>
+                    <span class="progress-text">Week: 95%</span>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-bar-container"><div class="progress-bar" style="width: 66%;"></div></div>
+                    <span class="progress-text">Day: 66%</span>
+                </div>
+            </div>
+
+            <!-- 待辦事項 -->
+            <div class="panel-section">
+                <h2>To Do List:</h2>
+                <ul class="todo-list">
+                    <li><label><input type="checkbox" checked><span class="todo-text">Update Linkedin Profile</span></label></li>
+                    <li><label><input type="checkbox"><span class="todo-text">Update portfolio</span></label></li>
+                    <li><label><input type="checkbox"><span class="todo-text">Update CV</span></label></li>
+                    <li><label><input type="checkbox"><span class="todo-text">Conduct research</span></label></li>
+                </ul>
+            </div>
+
+            <!-- 求職管道連結 -->
+            <div class="panel-section">
+                <h2>Job boards:</h2>
+                <a href="https://www.linkedin.com" target="_blank" class="nav-link">
+                    <span class="link-icon linkedin-icon">in</span> Linkedin
+                </a>
+                <a href="#" class="nav-link">
+                    <span class="link-icon glassdoor-icon">G</span> GlassDoor
+                </a>
+            </div>
+
+            <!-- AI 工具連結 -->
+            <div class="panel-section">
+                <h2>AI tools:</h2>
+                <a href="#" class="nav-link">
+                    <span class="link-icon ai-icon">✦</span> Gemini: Ai Coach
+                </a>
+            </div>
+        </aside>
+
+        <!-- ================= 右側主內容區 ================= -->
+        <section class="main-content">
+            
+            <!-- 上半部：核心看板追蹤器 -->
+            <article class="content-card">
+                <div class="card-header">
+                    <div class="header-left">
+                        <h2>Application Tracker</h2>
+                        <div class="filter-tabs">
+                            <button class="tab-btn active">📊 Status</button>
+                            <button class="tab-btn">⭕ Not started</button>
+                        </div>
+                    </div>
+                    <div class="header-tools">
+                        <span>☰</span> <span>⇅</span> <span>🔍</span>
+                    </div>
+                </div>
+
+                <!-- 看板四縱列 -->
+                <div class="kanban-board">
+                    <!-- 第一欄：未開始 -->
+                    <div class="kanban-column">
+                        <div class="column-badge status-not-started">● Not started <span class="count">1</span></div>
+                        <div class="job-card">
+                            <h3>Job Role A</h3>
+                            <p class="company">ABC Limited</p>
+                            <p class="location">Manchester</p>
+                            <p class="salary">£30,000.00</p>
+                        </div>
+                    </div>
+
+                    <!-- 第二欄：已申請 -->
+                    <div class="kanban-column">
+                        <div class="column-badge status-applied">● Applied <span class="count">1</span></div>
+                        <div class="job-card">
+                            <h3>Job Role B</h3>
+                            <p class="company">ABC Limited</p>
+                            <p class="location">London</p>
+                            <p class="salary">£36,000.00</p>
+                        </div>
+                    </div>
+
+                    <!-- 第三欄：錄取 -->
+                    <div class="kanban-column">
+                        <div class="column-badge status-offered">● Offered <span class="count">0</span></div>
+                    </div>
+
+                    <!-- 第四欄：拒絕 -->
+                    <div class="kanban-column">
+                        <div class="column-badge status-rejected">● Rejected <span class="count">1</span></div>
+                        <div class="job-card position-rejected">
+                            <h3>Job Role C</h3>
+                            <p class="company">ABC Limited</p>
+                            <p class="location">Liverpool</p>
+                            <p class="salary">£40,000.00</p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 下半部：工具箱網格 -->
+            <article class="content-card">
+                <div class="card-header">
+                    <div class="header-left">
+                        <h2>Application Toolbox</h2>
+                        <div class="filter-tabs">
+                            <button class="tab-btn active">⚃ Gallery view</button>
+                        </div>
+                    </div>
+                    <div class="header-tools">
+                        <span>☰</span> <span>⇅</span> <span>🔍</span>
+                    </div>
+                </div>
+
+                <!-- 工具方塊網格 -->
+                <div class="toolbox-grid">
+                    
+                    <!-- 卡片 1 -->
+                    <div class="tool-item">
+                        <div class="tool-top unlocked"><span class="tool-icon">🔍</span></div>
+                        <div class="tool-bottom"><span>🔍 Research</span></div>
+                    </div>
+
+                    <!-- 卡片 2 -->
+                    <div class="tool-item">
+                        <div class="tool-top unlocked"><span class="tool-icon-box">APPLY</span></div>
+                        <div class="tool-bottom"><span>🔗 CV & Cover letter</span></div>
+                    </div>
+
+                    <!-- 卡片 3 -->
+                    <div class="tool-item">
+                        <div class="tool-top unlocked"><span class="tool-icon" style="font-size:20px;">💬❓</span></div>
+                        <div class="tool-bottom"><span>💬 Interview Prep</span></div>
+                    </div>
+
+                    <!-- 卡片 4 -->
+                    <div class="tool-item">
+                        <div class="tool-top locked"><span class="lock-icon">🔒</span></div>
+                        <div class="tool-bottom"><span>🖥 Assessment Centre</span></div>
+                    </div>
+
+                    <!-- 卡片 5 -->
+                    <div class="tool-item">
+                        <div class="tool-top locked"><span class="lock-icon">🔒</span></div>
+                        <div class="tool-bottom"><span>? Common questions</span></div>
+                    </div>
+
+                    <!-- 卡片 6 -->
+                    <div class="tool-item">
+                        <div class="tool-top locked"><span class="lock-icon">🔒</span></div>
+                        <div class="tool-bottom"><span>💬 Questions to ask</span></div>
+                    </div>
+
+                    <!-- 卡片 7 -->
+                    <div class="tool-item">
+                        <div class="tool-top locked"><span class="lock-icon">🔒</span></div>
+                        <div class="tool-bottom"><span>🌐 UX Portfolio advice</span></div>
+                    </div>
+
+                    <!-- 卡片 8 -->
+                    <div class="tool-item">
+                        <div class="tool-top locked"><span class="lock-icon">🔒</span></div>
+                        <div class="tool-bottom"><span>🔗 Other ways</span></div>
+                    </div>
+
+                </div>
+            </article>
+
+        </section>
+    </main>
+
+</body>
+</html>
