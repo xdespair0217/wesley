@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>學習資料觀測站 | 數位學習手札 Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #121820;
+    --bg-panel: #18222d;
+    --bg-card: #1e2834;
+    --bg-card-hover: #263342;
+    --accent: #c89d66;
+    --accent-hover: #d9af7a;
+    --text-main: #f2eee9;
+    --text-muted: #9aa8b6;
+    --border-color: #2a3847;
+    --tag-bg: #23303e;
+    --pot-bg: #15191e;
+    --pot-yellow: #f1c40f;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Noto Sans TC', sans-serif;
+    overflow: hidden;
+  }
+
+  body { display: flex; flex-direction: row; }
+
+  /* Left Sidebar */
+  #sidebar {
+    width: 420px;
+    background-color: var(--bg-panel);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    height: 100dvh;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.3);
+    z-index: 10;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(135deg, #18222d 0%, #1e2834 100%);
+    flex-shrink: 0;
+  }
+
+  .sidebar-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .sidebar-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 13pt;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0;
+    letter-spacing: 1px;
+  }
+
+  .file-count-badge {
+    background-color: var(--accent);
+    color: #121820;
+    font-size: 8pt;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+  }
+
+  /* Search & Tag Modal Trigger Row */
+  .search-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .search-box {
+    position: relative;
+    flex: 1;
+  }
+
+  .search-input {
+    width: 100%;
+    background-color: #121820;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 7px 12px 7px 32px;
+    color: var(--text-main);
+    font-size: 9.5pt;
+    outline: none;
+  }
+  .search-input:focus { border-color: var(--accent); }
+
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 9.5pt;
+  }
+
+  .tag-modal-btn {
+    background-color: var(--tag-bg);
+    border: 1px solid var(--border-color);
+    color: var(--accent);
+    padding: 0 10px;
+    border-radius: 6px;
+    font-size: 8pt;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .tag-modal-btn:hover {
+    background-color: var(--accent);
+    color: #121820;
+  }
+
+  /* Quick Tags Bar */
+  .tags-container {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tags-container::-webkit-scrollbar { display: none; }
+
+  .filter-tag {
+    background-color: var(--tag-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 7.5pt;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .filter-tag:hover, .filter-tag.active {
+    background-color: var(--accent);
+    color: #121820;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Card List */
+  .card-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px;
+    padding-bottom: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .article-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .article-card:hover { border-color: var(--accent); }
+  .article-card.active {
+    background-color: #233140;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+
+  .card-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .card-series {
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(200, 157, 102, 0.12);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .card-date { font-size: 7.5pt; color: var(--text-muted); }
+
+  .card-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 10pt;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.4;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .card-tag-badge {
+    font-size: 7pt;
+    background: #121820;
+    color: var(--text-muted);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  /* Right Main Panel */
+  #main-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    height: 100dvh;
+    background-color: var(--bg-dark);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Top Navbar */
+  .top-navbar {
+    background-color: var(--pot-bg);
+    border-bottom: 1px solid #222831;
+    padding: 6px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    height: 52px;
+    flex-shrink: 0;
+    z-index: 30;
+  }
+
+  .pot-console {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #101418;
+    border: 1px solid #252e3a;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  .pot-select {
+    background: #18222d;
+    color: var(--pot-yellow);
+    border: 1px solid #3a4452;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 7.5pt;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .pot-display {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .pot-time-big {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12pt;
+    font-weight: bold;
+    color: var(--pot-yellow);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+
+  .pot-visualizer {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 14px;
+    padding: 0 2px;
+  }
+
+  .bar {
+    width: 2.5px;
+    background: #3498db;
+    height: 4px;
+    transition: height 0.1s ease;
+  }
+  .bar:nth-child(even) { background: var(--pot-yellow); }
+
+  .pot-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .pot-btn {
+    background: #252d37;
+    border: 1px solid #3a4452;
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7.5pt;
+  }
+  .pot-btn:hover { background: #344154; border-color: var(--pot-yellow); }
+
+  .pot-track-box {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 140px;
+  }
+
+  .pot-filename {
+    font-size: 7pt;
+    color: #a0aab5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+  }
+
+  .pot-progress-container {
+    width: 100%;
+    background: #2a3442;
+    height: 3px;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .pot-progress-bar {
+    background: var(--pot-yellow);
+    height: 100%;
+    width: 0%;
+    border-radius: 2px;
+  }
+
+  .action-buttons { display: flex; gap: 6px; align-items: center; }
+
+  .btn-action {
+    background-color: var(--border-color);
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 7.5pt;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-action:hover { background-color: #384658; }
+
+  .btn-external {
+    background-color: var(--accent);
+    color: #121820;
+    font-weight: 600;
+    font-size: 7.5pt;
+    padding: 5px 10px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .mobile-toggle-btn {
+    display: none;
+    background-color: var(--accent);
+    color: #121820;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 7.5pt;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* Header Box */
+  .pdf-framed-header {
+    background: #14171f;
+    border-bottom: 1px solid #262c38;
+    padding: 8px 16px;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .pdf-framed-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(200, 157, 102, 0.35);
+    background: #1a1e29;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+
+  /* Viewer Area */
+  .viewer-container {
+    flex: 1;
+    padding: 12px;
+    background-color: #0d1218;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 6px;
+    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .placeholder-view {
+    margin: auto;
+    text-align: center;
+    color: var(--text-muted);
+    font-family: 'Noto Serif TC', serif;
+  }
+  .placeholder-view h2 { color: var(--accent); margin-bottom: 6px; font-size: 13pt; }
+
+  /* Tag Vault Modal */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 14, 18, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  .tag-modal-content {
+    background: var(--bg-panel);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    overflow: hidden;
+  }
+
+  .tag-modal-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .tag-modal-title {
+    font-family: 'Noto Serif TC', serif;
+    color: var(--accent);
+    font-size: 11pt;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .tag-modal-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14pt;
+    cursor: pointer;
+  }
+
+  .tag-modal-search {
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .tag-modal-input {
+    width: 100%;
+    background: #121820;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: #fff;
+    font-size: 9pt;
+    outline: none;
+  }
+
+  .tag-modal-grid {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-content: flex-start;
+  }
+
+  .galaxy-tag {
+    background: #121820;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 8pt;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .galaxy-tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .galaxy-tag-count {
+    background: var(--tag-bg);
+    color: var(--accent);
+    font-size: 7pt;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-toggle-btn { display: inline-block; }
+    .pot-track-box { display: none; }
+
+    body.mobile-view-list #sidebar {
+      display: flex !important;
+      width: 100% !important;
+    }
+    body.mobile-view-list #main-panel {
+      display: none !important;
+    }
+
+    body.mobile-view-reader #sidebar {
+      display: none !important;
+    }
+    body.mobile-view-reader #main-panel {
+      display: flex !important;
+      width: 100% !important;
+    }
+  }
+</style>
+</head>
+<body class="mobile-view-list">
+
+  <!-- LEFT SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title-row">
+        <h1 class="sidebar-title">學習資料觀測站</h1>
+        <span class="file-count-badge" id="countBadge">同步中...</span>
+      </div>
+      <div class="search-row">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchInput" placeholder="搜尋學習手札/文章..." oninput="filterArticles()">
+        </div>
+        <button class="tag-modal-btn" onclick="openTagModal()">🏷️ 標籤庫</button>
+      </div>
+      <div class="tags-container" id="tagsContainer"></div>
+    </div>
+    <div class="card-list" id="cardList">
+      <div style="text-align:center; color: var(--text-muted); padding: 30px 0;">正在同步學習資料庫...</div>
+    </div>
+  </div>
+
+  <!-- RIGHT MAIN PANEL -->
+  <div id="main-panel">
+    <div class="top-navbar">
+      <div class="pot-console">
+        <select id="playlistSelect" class="pot-select" onchange="switchTrack()">
+          <option value="0">01. 宿醉.mp3</option>
+          <option value="1">02. 想和你漫步在午后.m4a</option>
+          <option value="2">03. Orion_128k.mp3</option>
+          <option value="3">04. 《明天你好》.mp3</option>
+          <option value="4">05. Broadleaf Forest.mp3</option>
+        </select>
+        
+        <div class="pot-controls">
+          <button class="pot-btn" id="playBtn" onclick="toggleAudio()">▶</button>
+          <button class="pot-btn" onclick="stopAudio()">■</button>
+        </div>
+
+        <button class="mobile-toggle-btn" id="mobileToggleBtn" onclick="toggleMobileView()">返回列表</button>
+
+        <div class="pot-display">
+          <div class="pot-time-big" id="timeDisplay">00:00</div>
+          <div class="pot-visualizer" id="visualizer">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          </div>
+        </div>
+
+        <div class="pot-track-box">
+          <div class="pot-filename" id="trackTitleDisplay">專注學習背景音效</div>
+          <div class="pot-progress-container" id="progressContainer" onclick="seekAudio(event)">
+            <div class="pot-progress-bar" id="progressBar"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-action" onclick="loadSheetData()">🔄 同步</button>
+        <a href="#" id="openExternalPdf" target="_blank" class="btn-external">全螢幕 PDF ↗</a>
+      </div>
+    </div>
+
+    <!-- Header info -->
+    <div class="pdf-framed-header" id="pdfFramedHeader">
+      <div class="pdf-framed-box">
+        <span style="font-size: 8pt; font-family: 'Share Tech Mono', monospace; color: var(--accent); font-weight: 700;" id="pdfSeriesTag">-</span>
+        <span style="color: var(--border-color);">/</span>
+        <span style="font-size: 8.5pt; color: var(--text-main); font-weight: 600;" id="pdfTitleTag">-</span>
+      </div>
+    </div>
+
+    <audio id="bgmAudio" preload="auto" loop></audio>
+
+    <div class="viewer-container" id="viewerContainer">
+      <div class="placeholder-view">
+        <h2>請從左側選擇一篇學習手札</h2>
+        <p>點擊列表項目即可直接預覽講義與教材內容。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAG MODAL -->
+  <div class="modal-overlay" id="tagModalOverlay" onclick="closeTagModal(event)">
+    <div class="tag-modal-content" onclick="event.stopPropagation()">
+      <div class="tag-modal-header">
+        <h3 class="tag-modal-title">🏷️ 核心主題與標籤庫</h3>
+        <button class="tag-modal-close" onclick="closeTagModal()">✕</button>
+      </div>
+      <div class="tag-modal-search">
+        <input type="text" class="tag-modal-input" id="tagModalSearch" placeholder="搜尋主題標籤..." oninput="filterModalTags()">
+      </div>
+      <div class="tag-modal-grid" id="tagModalGrid"></div>
+    </div>
+  </div>
+
+<script>
+  // 最新發布的 Google Sheet CSV 網址
+  const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQJkmxtUK5E7BlERxUdp_J_6IlkI0tA0wMxlbQ-dR9U7EYwDX0OHl38DnoLo9VLTNL8VohEV9z1Ee6u/pub?output=csv";
+
+  const playlist = [
+    { title: "宿醉.mp3", url: "https://www.image2url.com/r2/default/audio/1787326558036-d679f42e-b042-494d-87e1-feee736b1ea6.mp3" },
+    { title: "想和你漫步在午后.m4a", url: "https://www.image2url.com/r2/default/audio/1787407767856-ab0f4461-a132-4df2-971d-89b5ff98feb9.m4a" },
+    { title: "Orion_128k", url: "https://www.image2url.com/r2/default/audio/1787736959682-885c43d4-5c38-432a-aa21-f3b2ad3ba518.mp3" },
+    { title: "《明天你好》", url: "https://www.image2url.com/r2/default/audio/1788179407791-02a3f267-e03d-4573-b5f0-9ae6d965edbe.mp3" },
+    { title: "Broadleaf Forest", url: "https://www.image2url.com/r2/default/audio/1788180118746-78d06f8a-4b1d-40dc-b4cd-eb54f6c4b6b5.mp3" }
+  ];
+
+  let currentTrackIdx = 0;
+  let articles = [];
+  let currentActiveTag = "全部";
+  let currentArticleIndex = null;
+  let isNavigating = false;
+
+  const audio = document.getElementById('bgmAudio');
+  const playBtn = document.getElementById('playBtn');
+  const timeDisplay = document.getElementById('timeDisplay');
+  const progressBar = document.getElementById('progressBar');
+  const bars = document.querySelectorAll('.bar');
+
+  function initAudioPlayer() {
+    audio.src = playlist[currentTrackIdx].url;
+    document.getElementById('trackTitleDisplay').innerText = playlist[currentTrackIdx].title;
+  }
+
+  function switchTrack() {
+    const select = document.getElementById('playlistSelect');
+    currentTrackIdx = parseInt(select.value, 10);
+    audio.src = playlist[currentTrackIdx].url;
+    document.getElementById('trackTitleDisplay').innerText = playlist[currentTrackIdx].title;
+    audio.play().then(() => { playBtn.innerText = "❚❚"; }).catch(e => console.log(e));
+  }
+
+  async function loadSheetData() {
+    document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: var(--text-muted); padding: 30px 0;">正在同步學習資料庫...</div>`;
+    try {
+      const response = await fetch(csvUrl);
+      const text = await response.text();
+      parseCSV(text);
+    } catch (error) {
+      console.error("無法載入試算表：", error);
+      document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: #ff6b6b; padding: 30px 0;">連線失敗，請點擊同步重試</div>`;
+    }
+  }
+
+  // 健全的多行 CSV 解析器
+  function parseCSV(text) {
+    const rows = [];
+    let currentRow = [];
+    let currentField = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      const nextC = text[i + 1];
+
+      if (c === '"') {
+        if (inQuotes && nextC === '"') {
+          currentField += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (c === ',' && !inQuotes) {
+        currentRow.push(currentField.trim());
+        currentField = '';
+      } else if ((c === '\r' || c === '\n') && !inQuotes) {
+        if (c === '\r' && nextC === '\n') i++;
+        currentRow.push(currentField.trim());
+        if (currentRow.some(f => f !== '')) rows.push(currentRow);
+        currentRow = [];
+        currentField = '';
+      } else {
+        currentField += c;
+      }
+    }
+    if (currentField || currentRow.length > 0) {
+      currentRow.push(currentField.trim());
+      if (currentRow.some(f => f !== '')) rows.push(currentRow);
+    }
+
+    articles = [];
+    // 跳過標題列 i = 1
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (row.length >= 5) {
+        const [date, series, title, rawTags, pdfLink, status] = row;
+        if (title && title.trim() !== "") {
+          const tagsArray = rawTags ? rawTags.split('/').map(t => t.trim()).filter(t => t !== "") : [];
+          
+          // 清理網址中的空白與換行符號
+          let cleanPdf = pdfLink ? pdfLink.replace(/\s+/g, '') : '';
+          let previewPdf = cleanPdf;
+          let rawPdf = cleanPdf;
+
+          if (cleanPdf.includes('drive.google.com')) {
+            if (cleanPdf.includes('/view')) {
+              previewPdf = cleanPdf.replace('/view', '/preview');
+            } else if (!cleanPdf.includes('/preview')) {
+              previewPdf = cleanPdf + '/preview';
+            }
+            rawPdf = previewPdf.replace('/preview', '/view?usp=sharing');
+          }
+
+          articles.push({
+            date: date ? date.trim() : '',
+            series: series ? series.trim() : '',
+            title: title ? title.trim() : '',
+            tags: tagsArray,
+            pdf: previewPdf,
+            rawPdf: rawPdf,
+            status: status ? status.trim() : "已發布"
+          });
+        }
+      }
+    }
+
+    // 日期由新到舊排序
+    articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+    initDashboard();
+  }
+
+  function initDashboard() {
+    renderTags();
+    renderCards(articles);
+    initAudioPlayer();
+  }
+
+  function renderTags() {
+    const tagCountMap = {};
+    articles.forEach(a => {
+      a.tags.forEach(t => {
+        tagCountMap[t] = (tagCountMap[t] || 0) + 1;
+      });
+    });
+
+    const sortedTags = Object.keys(tagCountMap).sort((a, b) => tagCountMap[b] - tagCountMap[a]);
+    const top20Tags = sortedTags.slice(0, 20);
+
+    let html = `<div class="filter-tag ${currentActiveTag === '全部' ? 'active' : ''}" onclick="filterByTag('全部')">全部 (${articles.length})</div>`;
+    top20Tags.forEach(tag => {
+      html += `<div class="filter-tag ${currentActiveTag === tag ? 'active' : ''}" onclick="filterByTag('${tag}')">${tag} (${tagCountMap[tag]})</div>`;
+    });
+
+    document.getElementById('tagsContainer').innerHTML = html;
+  }
+
+  function renderCards(list) {
+    const cardList = document.getElementById('cardList');
+    document.getElementById('countBadge').innerText = `${list.length} 篇`;
+    if (list.length === 0) {
+      cardList.innerHTML = `<div style="text-align:center; color: var(--text-muted); padding: 30px 0;">沒有找到相符資料</div>`;
+      return;
+    }
+    let html = '';
+    list.forEach((art) => {
+      const globalIdx = articles.indexOf(art);
+      const isSelected = globalIdx === currentArticleIndex;
+      const tagBadges = art.tags.map(t => `<span class="card-tag-badge">${t}</span>`).join('');
+      html += `
+        <div class="article-card ${isSelected ? 'active' : ''}" onclick="selectArticle(${globalIdx})">
+          <div class="card-meta-row">
+            <span class="card-series">${art.series}</span>
+            <span class="card-date">${art.date}</span>
+          </div>
+          <div class="card-title">${art.title}</div>
+          <div class="card-tags">${tagBadges}</div>
+        </div>
+      `;
+    });
+    cardList.innerHTML = html;
+  }
+
+  function filterByTag(tag) {
+    currentActiveTag = tag;
+    renderTags();
+    filterArticles();
+  }
+
+  function filterArticles() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = articles.filter(art => {
+      const matchesTag = currentActiveTag === '全部' || art.tags.includes(currentActiveTag);
+      const matchesQuery = art.title.toLowerCase().includes(query) || 
+                           art.series.toLowerCase().includes(query) || 
+                           art.tags.some(t => t.toLowerCase().includes(query));
+      return matchesTag && matchesQuery;
+    });
+    renderCards(filtered);
+  }
+
+  function selectArticle(idx) {
+    if (isNavigating) return;
+    isNavigating = true;
+
+    currentArticleIndex = idx;
+    const art = articles[idx];
+    filterArticles();
+
+    safeClearViewer();
+
+    document.getElementById('pdfFramedHeader').style.display = 'flex';
+    document.getElementById('pdfSeriesTag').innerText = art.series;
+    document.getElementById('pdfTitleTag').innerText = art.title;
+    document.getElementById('openExternalPdf').href = art.rawPdf;
+
+    const viewer = document.getElementById('viewerContainer');
+    const iframeWrapper = document.createElement('div');
+    iframeWrapper.style.cssText = "flex: 1; width: 100%; height: 100%; position: relative; background: #fff; border-radius: 6px; overflow: hidden;";
+    iframeWrapper.innerHTML = `
+      <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 9.5pt; z-index: 1;">
+        <span style="display:inline-block; animation: spin 1s infinite linear;">⟳</span> 正在載入學習手札文件...
+      </div>
+      <iframe src="${art.pdf}" title="${art.title}" style="position: relative; z-index: 2; width:100%; height:100%; border:none;"></iframe>
+    `;
+
+    viewer.appendChild(iframeWrapper);
+    isNavigating = false;
+
+    if (window.innerWidth <= 768) {
+      document.body.className = "mobile-view-reader";
+      document.getElementById('mobileToggleBtn').innerText = "← 返回列表";
+    }
+  }
+
+  function toggleMobileView() {
+    const body = document.body;
+    if (body.classList.contains("mobile-view-reader")) {
+      body.className = "mobile-view-list";
+    } else {
+      if (currentArticleIndex !== null) {
+        body.className = "mobile-view-reader";
+        document.getElementById('mobileToggleBtn').innerText = "← 返回列表";
+      } else {
+        alert("請先選擇一篇文章");
+      }
+    }
+  }
+
+  function safeClearViewer() {
+    const viewer = document.getElementById('viewerContainer');
+    viewer.querySelectorAll('iframe, div').forEach(el => el.remove());
+    const header = document.getElementById('pdfFramedHeader');
+    if (header) header.style.display = 'none';
+  }
+
+  function openTagModal() {
+    renderModalTags();
+    document.getElementById('tagModalOverlay').classList.add('active');
+  }
+
+  function closeTagModal() {
+    document.getElementById('tagModalOverlay').classList.remove('active');
+  }
+
+  function renderModalTags() {
+    const tagCountMap = {};
+    articles.forEach(a => {
+      a.tags.forEach(t => {
+        tagCountMap[t] = (tagCountMap[t] || 0) + 1;
+      });
+    });
+
+    const sortedTags = Object.keys(tagCountMap).sort((a, b) => tagCountMap[b] - tagCountMap[a]);
+    let html = `
+      <div class="galaxy-tag" onclick="selectTagFromModal('全部')">
+        # 全部手札 <span class="galaxy-tag-count">${articles.length}</span>
+      </div>
+    `;
+
+    sortedTags.forEach(tag => {
+      html += `
+        <div class="galaxy-tag" onclick="selectTagFromModal('${tag}')">
+          # ${tag} <span class="galaxy-tag-count">${tagCountMap[tag]}</span>
+        </div>
+      `;
+    });
+
+    document.getElementById('tagModalGrid').innerHTML = html;
+  }
+
+  function filterModalTags() {
+    const query = document.getElementById('tagModalSearch').value.toLowerCase();
+    const tags = document.querySelectorAll('.galaxy-tag');
+    tags.forEach(t => {
+      const text = t.innerText.toLowerCase();
+      t.style.display = text.includes(query) ? 'inline-flex' : 'none';
+    });
+  }
+
+  function selectTagFromModal(tag) {
+    filterByTag(tag);
+    closeTagModal();
+  }
+
+  function toggleAudio() {
+    if (audio.paused) {
+      audio.play().then(() => { playBtn.innerText = "❚❚"; }).catch(e => console.log(e));
+    } else {
+      audio.pause();
+      playBtn.innerText = "▶";
+    }
+  }
+
+  function stopAudio() {
+    audio.pause();
+    audio.currentTime = 0;
+    playBtn.innerText = "▶";
+  }
+
+  audio.addEventListener('timeupdate', () => {
+    if (!isNaN(audio.duration)) {
+      const currentMinutes = Math.floor(audio.currentTime / 60);
+      const currentSeconds = Math.floor(audio.currentTime % 60);
+      timeDisplay.innerText = String(currentMinutes).padStart(2, '0') + ":" + String(currentSeconds).padStart(2, '0');
+      progressBar.style.width = ((audio.currentTime / audio.duration) * 100) + '%';
+    }
+  });
+
+  function seekAudio(event) {
+    const container = document.getElementById('progressContainer');
+    const rect = container.getBoundingClientRect();
+    const clickPosition = (event.clientX - rect.left) / rect.width;
+    if (!isNaN(audio.duration)) {
+      audio.currentTime = clickPosition * audio.duration;
+    }
+  }
+
+  setInterval(() => {
+    if (!audio.paused) {
+      bars.forEach(bar => {
+        const randomHeight = Math.floor(Math.random() * 14) + 3;
+        bar.style.height = randomHeight + 'px';
+      });
+    } else {
+      bars.forEach(bar => { bar.style.height = '4px'; });
+    }
+  }, 100);
+
+  window.onload = loadSheetData;
+</script>
+</body>
+</html>
