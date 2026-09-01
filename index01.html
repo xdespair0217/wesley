@@ -7,18 +7,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-dark: #121820;
-    --bg-panel: #18222d;
-    --bg-card: #1e2834;
-    --bg-card-hover: #263342;
-    --accent: #c89d66;
-    --accent-hover: #d9af7a;
-    --text-main: #f2eee9;
-    --text-muted: #9aa8b6;
-    --border-color: #2a3847;
-    --tag-bg: #23303e;
-    --pot-bg: #15191e;
-    --pot-yellow: #f1c40f;
+    --bg-dark: #090d16;
+    --bg-panel: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #334155;
+    --accent: #38bdf8;
+    --accent-hover: #0ea5e9;
+    --amber-gold: #f59e0b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --tag-bg: #1e293b;
+    --pot-bg: #0f172a;
   }
 
   * { box-sizing: border-box; }
@@ -46,15 +46,15 @@
     flex-direction: column;
     height: 100%;
     height: 100dvh;
-    box-shadow: 4px 0 15px rgba(0,0,0,0.3);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.4);
     z-index: 10;
     flex-shrink: 0;
   }
 
   .sidebar-header {
-    padding: 14px 16px;
+    padding: 16px;
     border-bottom: 1px solid var(--border-color);
-    background: linear-gradient(135deg, #18222d 0%, #1e2834 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     flex-shrink: 0;
   }
 
@@ -62,32 +62,33 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   .sidebar-title {
-    font-family: 'Noto Serif TC', serif;
-    font-size: 13pt;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 12pt;
     font-weight: 700;
     color: var(--accent);
     margin: 0;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
   }
 
   .file-count-badge {
-    background-color: var(--accent);
-    color: #121820;
+    background-color: rgba(56, 189, 248, 0.15);
+    color: var(--accent);
     font-size: 8pt;
     font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 12px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
   }
 
   /* Search & Tag Modal Trigger Row */
   .search-row {
     display: flex;
-    gap: 6px;
-    margin-bottom: 8px;
+    gap: 8px;
+    margin-bottom: 10px;
   }
 
   .search-box {
@@ -97,15 +98,16 @@
 
   .search-input {
     width: 100%;
-    background-color: #121820;
+    background-color: #090d16;
     border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 7px 12px 7px 32px;
+    border-radius: 8px;
+    padding: 8px 12px 8px 34px;
     color: var(--text-main);
-    font-size: 9.5pt;
+    font-size: 9pt;
     outline: none;
+    transition: all 0.2s;
   }
-  .search-input:focus { border-color: var(--accent); }
+  .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,0.15); }
 
   .search-icon {
     position: absolute;
@@ -113,15 +115,15 @@
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-muted);
-    font-size: 9.5pt;
+    font-size: 9pt;
   }
 
   .tag-modal-btn {
-    background-color: var(--tag-bg);
+    background-color: #1e293b;
     border: 1px solid var(--border-color);
     color: var(--accent);
-    padding: 0 10px;
-    border-radius: 6px;
+    padding: 0 12px;
+    border-radius: 8px;
     font-size: 8pt;
     font-weight: 600;
     cursor: pointer;
@@ -129,16 +131,18 @@
     align-items: center;
     gap: 4px;
     white-space: nowrap;
+    transition: all 0.2s;
   }
   .tag-modal-btn:hover {
     background-color: var(--accent);
-    color: #121820;
+    border-color: var(--accent);
+    color: #090d16;
   }
 
   /* Quick Tags Bar */
   .tags-container {
     display: flex;
-    gap: 4px;
+    gap: 6px;
     overflow-x: auto;
     padding-bottom: 4px;
     -webkit-overflow-scrolling: touch;
@@ -146,22 +150,27 @@
   .tags-container::-webkit-scrollbar { display: none; }
 
   .filter-tag {
-    background-color: var(--tag-bg);
+    background-color: #1e293b;
     border: 1px solid var(--border-color);
     color: var(--text-muted);
-    font-size: 7.5pt;
-    padding: 3px 8px;
-    border-radius: 4px;
+    font-size: 8pt;
+    padding: 4px 10px;
+    border-radius: 6px;
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
+    transition: all 0.2s;
   }
 
-  .filter-tag:hover, .filter-tag.active {
+  .filter-tag:hover {
+    background-color: #334155;
+    color: var(--text-main);
+  }
+  .filter-tag.active {
     background-color: var(--accent);
-    color: #121820;
+    color: #090d16;
     border-color: var(--accent);
-    font-weight: 600;
+    font-weight: 700;
   }
 
   /* Card List */
@@ -174,20 +183,22 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    background-color: #090d16;
   }
 
   .article-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 12px;
+    border-radius: 10px;
+    padding: 12px 14px;
     cursor: pointer;
     flex-shrink: 0;
+    transition: all 0.2s ease;
   }
 
-  .article-card:hover { border-color: var(--accent); }
+  .article-card:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
   .article-card.active {
-    background-color: #233140;
+    background-color: #172554;
     border-color: var(--accent);
     box-shadow: 0 0 0 1px var(--accent);
   }
@@ -203,15 +214,15 @@
     font-size: 7.5pt;
     font-weight: 700;
     color: var(--accent);
-    background: rgba(200, 157, 102, 0.12);
-    padding: 2px 6px;
-    border-radius: 3px;
+    background: rgba(56, 189, 248, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
   }
 
   .card-date { font-size: 7.5pt; color: var(--text-muted); }
 
   .card-title {
-    font-family: 'Noto Serif TC', serif;
+    font-family: 'Noto Sans TC', sans-serif;
     font-size: 10pt;
     font-weight: 600;
     color: var(--text-main);
@@ -226,11 +237,12 @@
   }
 
   .card-tag-badge {
-    font-size: 7pt;
-    background: #121820;
+    font-size: 7.5pt;
+    background: #0f172a;
     color: var(--text-muted);
     padding: 2px 6px;
-    border-radius: 3px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
   }
 
   /* Right Main Panel */
@@ -248,13 +260,13 @@
   /* Top Navbar */
   .top-navbar {
     background-color: var(--pot-bg);
-    border-bottom: 1px solid #222831;
-    padding: 6px 14px;
+    border-bottom: 1px solid var(--border-color);
+    padding: 8px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    height: 52px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    height: 56px;
     flex-shrink: 0;
     z-index: 30;
   }
@@ -262,20 +274,20 @@
   .pot-console {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: #101418;
-    border: 1px solid #252e3a;
-    padding: 3px 8px;
-    border-radius: 6px;
+    gap: 10px;
+    background: #090d16;
+    border: 1px solid var(--border-color);
+    padding: 4px 10px;
+    border-radius: 8px;
   }
 
   .pot-select {
-    background: #18222d;
-    color: var(--pot-yellow);
-    border: 1px solid #3a4452;
-    padding: 3px 6px;
-    border-radius: 4px;
-    font-size: 7.5pt;
+    background: #1e293b;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 8pt;
     font-weight: 600;
     outline: none;
     cursor: pointer;
@@ -284,15 +296,15 @@
   .pot-display {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
 
   .pot-time-big {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 12pt;
+    font-size: 11pt;
     font-weight: bold;
-    color: var(--pot-yellow);
-    letter-spacing: 1px;
+    color: var(--amber-gold);
+    letter-spacing: 0.5px;
     line-height: 1;
   }
 
@@ -306,11 +318,11 @@
 
   .bar {
     width: 2.5px;
-    background: #3498db;
+    background: #334155;
     height: 4px;
     transition: height 0.1s ease;
   }
-  .bar:nth-child(even) { background: var(--pot-yellow); }
+  .bar:nth-child(even) { background: var(--accent); }
 
   .pot-controls {
     display: flex;
@@ -319,19 +331,20 @@
   }
 
   .pot-btn {
-    background: #252d37;
-    border: 1px solid #3a4452;
-    color: #fff;
-    width: 22px;
-    height: 22px;
-    border-radius: 4px;
+    background: #1e293b;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 7.5pt;
+    font-size: 8pt;
+    transition: all 0.2s;
   }
-  .pot-btn:hover { background: #344154; border-color: var(--pot-yellow); }
+  .pot-btn:hover { background: var(--accent); color: #090d16; border-color: var(--accent); }
 
   .pot-track-box {
     display: flex;
@@ -341,8 +354,8 @@
   }
 
   .pot-filename {
-    font-size: 7pt;
-    color: #a0aab5;
+    font-size: 7.5pt;
+    color: var(--text-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -351,55 +364,59 @@
 
   .pot-progress-container {
     width: 100%;
-    background: #2a3442;
-    height: 3px;
+    background: #334155;
+    height: 4px;
     border-radius: 2px;
     cursor: pointer;
     position: relative;
+    overflow: hidden;
   }
 
   .pot-progress-bar {
-    background: var(--pot-yellow);
+    background: var(--amber-gold);
     height: 100%;
     width: 0%;
     border-radius: 2px;
   }
 
-  .action-buttons { display: flex; gap: 6px; align-items: center; }
+  .action-buttons { display: flex; gap: 8px; align-items: center; }
 
   .btn-action {
-    background-color: var(--border-color);
+    background-color: #1e293b;
     color: var(--text-main);
     font-weight: 600;
-    font-size: 7.5pt;
-    padding: 5px 10px;
-    border-radius: 4px;
+    font-size: 8pt;
+    padding: 6px 12px;
+    border-radius: 6px;
     cursor: pointer;
-    border: none;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
   }
-  .btn-action:hover { background-color: #384658; }
+  .btn-action:hover { background-color: #334155; border-color: var(--accent); }
 
   .btn-external {
     background-color: var(--accent);
-    color: #121820;
-    font-weight: 600;
-    font-size: 7.5pt;
-    padding: 5px 10px;
-    border-radius: 4px;
+    color: #090d16;
+    font-weight: 700;
+    font-size: 8pt;
+    padding: 6px 12px;
+    border-radius: 6px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
+    transition: background-color 0.2s;
   }
+  .btn-external:hover { background-color: var(--accent-hover); }
 
   .mobile-toggle-btn {
     display: none;
     background-color: var(--accent);
-    color: #121820;
+    color: #090d16;
     border: none;
-    padding: 5px 12px;
-    border-radius: 4px;
-    font-size: 7.5pt;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 8pt;
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
@@ -407,9 +424,9 @@
 
   /* Header Box */
   .pdf-framed-header {
-    background: #14171f;
-    border-bottom: 1px solid #262c38;
-    padding: 8px 16px;
+    background: #0f172a;
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 16px;
     display: none;
     align-items: center;
     justify-content: space-between;
@@ -419,17 +436,17 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    border: 1px solid rgba(200, 157, 102, 0.35);
-    background: #1a1e29;
-    padding: 4px 10px;
-    border-radius: 4px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    background: #1e293b;
+    padding: 4px 12px;
+    border-radius: 6px;
   }
 
   /* Viewer Area */
   .viewer-container {
     flex: 1;
-    padding: 12px;
-    background-color: #0d1218;
+    padding: 16px;
+    background-color: #05070c;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -440,18 +457,18 @@
     width: 100%;
     height: 100%;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     background: #ffffff;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
   }
 
   .placeholder-view {
     margin: auto;
     text-align: center;
     color: var(--text-muted);
-    font-family: 'Noto Serif TC', serif;
   }
-  .placeholder-view h2 { color: var(--accent); margin-bottom: 6px; font-size: 13pt; }
+  .placeholder-view h2 { color: var(--accent); margin-bottom: 6px; font-size: 14pt; font-weight: 600; }
+  .placeholder-view p { font-size: 9.5pt; }
 
   /* Tag Vault Modal */
   .modal-overlay {
@@ -460,8 +477,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(10, 14, 18, 0.85);
-    backdrop-filter: blur(8px);
+    background: rgba(5, 7, 12, 0.8);
+    backdrop-filter: blur(6px);
     z-index: 100;
     display: none;
     justify-content: center;
@@ -474,18 +491,18 @@
   .tag-modal-content {
     background: var(--bg-panel);
     border: 1px solid var(--accent);
-    border-radius: 10px;
+    border-radius: 12px;
     width: 100%;
-    max-width: 640px;
+    max-width: 600px;
     max-height: 80vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
     overflow: hidden;
   }
 
   .tag-modal-header {
-    padding: 14px 18px;
+    padding: 16px 20px;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
@@ -493,7 +510,6 @@
   }
 
   .tag-modal-title {
-    font-family: 'Noto Serif TC', serif;
     color: var(--accent);
     font-size: 11pt;
     font-weight: 700;
@@ -507,27 +523,30 @@
     font-size: 14pt;
     cursor: pointer;
   }
+  .tag-modal-close:hover { color: var(--text-main); }
 
   .tag-modal-search {
-    padding: 10px 18px;
+    padding: 12px 20px;
     border-bottom: 1px solid var(--border-color);
+    background: #090d16;
   }
 
   .tag-modal-input {
     width: 100%;
-    background: #121820;
+    background: #1e293b;
     border: 1px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 8px 12px;
-    color: #fff;
+    color: var(--text-main);
     font-size: 9pt;
     outline: none;
   }
+  .tag-modal-input:focus { border-color: var(--accent); }
 
   .tag-modal-grid {
     flex: 1;
     overflow-y: auto;
-    padding: 18px;
+    padding: 20px;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -535,28 +554,32 @@
   }
 
   .galaxy-tag {
-    background: #121820;
+    background: #1e293b;
     border: 1px solid var(--border-color);
     color: var(--text-main);
     padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 8pt;
+    border-radius: 8px;
+    font-size: 8.5pt;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    transition: all 0.2s;
   }
   .galaxy-tag:hover {
+    background: var(--accent);
     border-color: var(--accent);
-    color: var(--accent);
+    color: #090d16;
+    font-weight: 700;
   }
   .galaxy-tag-count {
-    background: var(--tag-bg);
+    background: #0f172a;
     color: var(--accent);
-    font-size: 7pt;
+    font-size: 7.5pt;
     font-weight: 700;
     padding: 2px 6px;
-    border-radius: 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
   }
 
   @media (max-width: 768px) {
@@ -593,9 +616,9 @@
       <div class="search-row">
         <div class="search-box">
           <span class="search-icon">🔍</span>
-          <input type="text" class="search-input" id="searchInput" placeholder="搜尋學習手札/文章..." oninput="filterArticles()">
+          <input type="text" class="search-input" id="searchInput" placeholder="搜尋學習手札、講義..." oninput="filterArticles()">
         </div>
-        <button class="tag-modal-btn" onclick="openTagModal()">🏷️ 標籤庫</button>
+        <button class="tag-modal-btn" onclick="openTagModal()">🏷️ 標籤</button>
       </div>
       <div class="tags-container" id="tagsContainer"></div>
     </div>
@@ -648,7 +671,7 @@
     <!-- Header info -->
     <div class="pdf-framed-header" id="pdfFramedHeader">
       <div class="pdf-framed-box">
-        <span style="font-size: 8pt; font-family: 'Share Tech Mono', monospace; color: var(--accent); font-weight: 700;" id="pdfSeriesTag">-</span>
+        <span style="font-size: 8pt; font-weight: 700; color: var(--accent);" id="pdfSeriesTag">-</span>
         <span style="color: var(--border-color);">/</span>
         <span style="font-size: 8.5pt; color: var(--text-main); font-weight: 600;" id="pdfTitleTag">-</span>
       </div>
@@ -659,7 +682,7 @@
     <div class="viewer-container" id="viewerContainer">
       <div class="placeholder-view">
         <h2>請從左側選擇一篇學習手札</h2>
-        <p>點擊列表項目即可直接預覽講義與教材內容。</p>
+        <p>點擊列表中的教材即可線上預覽講義內容。</p>
       </div>
     </div>
   </div>
@@ -668,18 +691,17 @@
   <div class="modal-overlay" id="tagModalOverlay" onclick="closeTagModal(event)">
     <div class="tag-modal-content" onclick="event.stopPropagation()">
       <div class="tag-modal-header">
-        <h3 class="tag-modal-title">🏷️ 核心主題與標籤庫</h3>
+        <h3 class="tag-modal-title">🏷️ 主題與標籤分類</h3>
         <button class="tag-modal-close" onclick="closeTagModal()">✕</button>
       </div>
       <div class="tag-modal-search">
-        <input type="text" class="tag-modal-input" id="tagModalSearch" placeholder="搜尋主題標籤..." oninput="filterModalTags()">
+        <input type="text" class="tag-modal-input" id="tagModalSearch" placeholder="搜尋標籤..." oninput="filterModalTags()">
       </div>
       <div class="tag-modal-grid" id="tagModalGrid"></div>
     </div>
   </div>
 
 <script>
-  // 最新發布的 Google Sheet CSV 網址
   const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQJkmxtUK5E7BlERxUdp_J_6IlkI0tA0wMxlbQ-dR9U7EYwDX0OHl38DnoLo9VLTNL8VohEV9z1Ee6u/pub?output=csv";
 
   const playlist = [
@@ -723,11 +745,10 @@
       parseCSV(text);
     } catch (error) {
       console.error("無法載入試算表：", error);
-      document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: #ff6b6b; padding: 30px 0;">連線失敗，請點擊同步重試</div>`;
+      document.getElementById('cardList').innerHTML = `<div style="text-align:center; color: #f87171; padding: 30px 0;">連線失敗，請點擊同步重試</div>`;
     }
   }
 
-  // 健全的多行 CSV 解析器
   function parseCSV(text) {
     const rows = [];
     let currentRow = [];
@@ -764,7 +785,6 @@
     }
 
     articles = [];
-    // 跳過標題列 i = 1
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
       if (row.length >= 5) {
@@ -772,7 +792,6 @@
         if (title && title.trim() !== "") {
           const tagsArray = rawTags ? rawTags.split('/').map(t => t.trim()).filter(t => t !== "") : [];
           
-          // 清理網址中的空白與換行符號
           let cleanPdf = pdfLink ? pdfLink.replace(/\s+/g, '') : '';
           let previewPdf = cleanPdf;
           let rawPdf = cleanPdf;
@@ -799,7 +818,6 @@
       }
     }
 
-    // 日期由新到舊排序
     articles.sort((a, b) => new Date(b.date) - new Date(a.date));
     initDashboard();
   }
@@ -890,10 +908,10 @@
 
     const viewer = document.getElementById('viewerContainer');
     const iframeWrapper = document.createElement('div');
-    iframeWrapper.style.cssText = "flex: 1; width: 100%; height: 100%; position: relative; background: #fff; border-radius: 6px; overflow: hidden;";
+    iframeWrapper.style.cssText = "flex: 1; width: 100%; height: 100%; position: relative; background: #fff; border-radius: 8px; overflow: hidden;";
     iframeWrapper.innerHTML = `
       <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 9.5pt; z-index: 1;">
-        <span style="display:inline-block; animation: spin 1s infinite linear;">⟳</span> 正在載入學習手札文件...
+        <span style="display:inline-block; animation: spin 1s infinite linear;">⟳</span> 正在載入學習文件...
       </div>
       <iframe src="${art.pdf}" title="${art.title}" style="position: relative; z-index: 2; width:100%; height:100%; border:none;"></iframe>
     `;
